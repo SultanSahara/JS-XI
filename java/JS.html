@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="" />
+    <title>Document</title>
+  </head>
+  <body
+    style="background: url(img/ahrira.jpg); background-size:cover; background-attachment:fixed ;"
+  >
+    <div
+      class="container"
+      style="background-color:rgb(39, 39, 39) ;  min-height: 100vh;"
+    >
+      <div class="row">
+        <div class="col-10 offset-1">
+          <h2 style="color: white;">Daftar Siswa</h2>
+          <form action="javascript:void(0);" method="POST" onsubmit="app.Add()">
+            <div class=" form-group">
+              <input
+                type="text"
+                id="addName"
+                placeholder="Name"
+                class="form-control"
+                style="font-size: 17px"
+              />
+            </div>
+            <div class=" form-group">
+              <input
+                type="text"
+                id="addAbsen"
+                placeholder="Absen"
+                class="form-control"
+                style="font-size: 17px"
+              />
+            </div>
+            <div class=" form-group">
+              <input
+                type="text"
+                id="addWaifu"
+                placeholder="Waifu Name"
+                class="form-control"
+                style="font-size: 17px"
+              />
+            </div>
+            <input type="submit" value="Add" class="btn btn-success" />
+          </form>
+
+          <div id="formEdit" role="aria-hidden">
+            <form action="javascript:void(0);" method="POST" id="saveEdit">
+              <div class=" form-group">
+                <input
+                  type="text"
+                  id="editName"
+                  class=" form-control"
+                  placeholder="Name"
+                />
+              </div>
+
+              <div class=" form-group">
+                <input
+                  type="text"
+                  id="editAbsen"
+                  class=" form-control"
+                  placeholder="Absen"
+                />
+              </div>
+
+              <div class=" form-group">
+                <input
+                  type="text"
+                  id="editWaifu"
+                  class=" form-control"
+                  placeholder="Waifu Name"
+                />
+              </div>
+              <input type="submit" value="Edit " class="btn btn-primary" />
+              <button
+                onclick="CloseInput()"
+                aria-label="Close"
+                class=" btn btn-danger"
+              >
+                Hilang
+              </button>
+            </form>
+          </div>
+
+          <p id="hitung" style="color: white"></p>
+
+          <table class="table table-dark ">
+            <tr>
+              <th>Name</th>
+              <th>Absen</th>
+              <th>Waifu</th>
+              <th>Action</th>
+            </tr>
+            <tbody id="name"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRIPT JS -->
+    <script>
+      document.getElementById("formEdit").style.display = "none";
+      var app = new (function(data) {
+        this.getName = document.getElementById("name");
+        this.getAbsen = document.getElementById("absen");
+        this.getWaifu = document.getElementById("waifu");
+        this.Name = []; // untuk menampung result sementara di array
+        this.Absen = [];
+        this.Waifu = [];
+
+        this.Hitung = function(data) {
+          var use = document.getElementById("hitung");
+          var name = " Siswa";
+
+          if (data) {
+            use.innerHTML = data + " " + name;
+          } else {
+            use.innerHTML = "Tidak ada" + name;
+          }
+        };
+
+        this.ShowData = function() {
+          var data1 = " ";
+          if (this.Name.length > 0) {
+            for (i = 0; i < this.Name.length; i++) {
+              data1 += "<tr>";
+              data1 += "<td>" + this.Name[i] + "</td>";
+              data1 += "<td>" + this.Absen[i] + "</td>";
+              data1 += "<td>" + this.Waifu[i] + "</td>";
+              data1 +=
+                '<td> <button class="btn btn-info" onclick="app.Edit (' +
+                i +
+                ')"> Edit </button> </td>';
+              data1 +=
+                '<td> <button class="btn btn-warning" onclick="app.Delete(' +
+                i +
+                ')"> Delete </button> </td>';
+              data1 += "</tr>";
+            }
+          }
+          this.Hitung(this.Name.length);
+          return (this.getName.innerHTML = data1);
+        };
+
+        this.Add = function() {
+          var getIdAddName = document.getElementById("addName");
+          var getIdAddAbsen = document.getElementById("addAbsen");
+          var getIdAddWaifu = document.getElementById("addWaifu");
+          var add = getIdAddName.value;
+          var addAbsen = getIdAddAbsen.value;
+          var addWaifu = getIdAddWaifu.value;
+
+          if (getIdAddName) {
+            this.Name.push(add.trim());
+            this.Absen.push(addAbsen.trim());
+            this.Waifu.push(addWaifu.trim());
+
+            getIdAddName.value = "";
+            getIdAddAbsen.value = "";
+            getIdAddWaifu.value = "";
+            this.ShowData();
+          }
+        };
+
+        this.Edit = function(item) {
+          var edit = document.getElementById("editName"); //mengambil Data
+          var editAbsen = document.getElementById("editAbsen");
+          var editWaifu = document.getElementById("editWaifu");
+
+          //display value in field
+          edit.value = this.Name[item];
+          editAbsen.value = this.Absen[item];
+          editWaifu.value = this.Waifu[item];
+          document.getElementById("formEdit").style.display = "block";
+
+          yurod = this;
+          document.getElementById("saveEdit").onsubmit = function() {
+            var newName = edit.value;
+            var newAbsen = editAbsen.value;
+            var newWaifu = editWaifu.value;
+            if (newName || newAbsen || newWaifu) {
+              yurod.Name.splice(item, 1, newName.trim());
+              yurod.Absen.splice(item, 1, newAbsen.trim());
+              yurod.Waifu.splice(item, 1, newWaifu.trim());
+              yurod.ShowData();
+              CloseInput;
+            }
+          };
+        };
+
+        this.Delete = function(item) {
+          this.Name.splice(item, 1);
+          this.Absen.splice(item, 1);
+          this.Waifu.splice(item, 1);
+
+          this.ShowData();
+        };
+      })();
+      function CloseInput() {
+        document.getElementById("formEdit").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
